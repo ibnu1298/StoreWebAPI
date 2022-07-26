@@ -1,5 +1,6 @@
 global using StoreWebAPI.Data;
 global using Microsoft.EntityFrameworkCore;
+using StoreWebAPI.Data.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,12 @@ builder.Services.AddSwaggerGen();
 //Add Configuration EntityFrameWork DataContext
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("ShoppConnection")).EnableSensitiveDataLogging());
+
+//Menambahkan Automapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+//Inject class DAL
+builder.Services.AddScoped<IProduct, ProductDAL>();
 
 var app = builder.Build();
 
