@@ -85,6 +85,12 @@ namespace StoreWebAPI.Data.DAL
             return results;
         }
 
+        public async Task<IEnumerable<Product>> GetPriceBetween(double high, double low)
+        {
+            var results = await _context.Products.Where(p => p.Price <= high && p.Price >= low).OrderBy(p => p.Price).ToListAsync();
+            return results;
+        }
+
         public async Task<IEnumerable<Product>> GetProductWithCategory()
         {
             var results = await _context.Products.Include(p => p.Category).OrderBy(p => p.Price).ToListAsync();

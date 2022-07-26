@@ -11,6 +11,7 @@ namespace StoreWebAPI.Data.DAL
         Task<IEnumerable<Product>> GetByPrice(double price);
         Task<IEnumerable<Product>> GetByPriceToLow(double price);
         Task<IEnumerable<Product>> GetByPriceToHigh(double price);
+        Task<IEnumerable<Product>> GetPriceBetween(double high, double low);
         Task<IEnumerable<Product>> HighToLow();
         Task<IEnumerable<Product>> LowToHigh();
     }

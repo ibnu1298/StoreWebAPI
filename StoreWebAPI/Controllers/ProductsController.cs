@@ -81,7 +81,6 @@ namespace StoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [HttpGet("ByName/{name}")]
         public async Task<IEnumerable<ReadProductDTO>> GetByName(string name)
         {
@@ -90,7 +89,6 @@ namespace StoreWebAPI.Controllers
             var product = _mapper.Map<IEnumerable<ReadProductDTO>>(results); ;
             return product;
         }
-
         [HttpGet("ByCategory/{name}")]
         public async Task<IEnumerable<ReadProductCategoryDTO>> GetSamuraiWithBattles(string name)
         {
@@ -112,6 +110,13 @@ namespace StoreWebAPI.Controllers
             var product = _mapper.Map<IEnumerable<ReadProductDTO>>(results);
             return product;
         }
+        [HttpGet("ByPriceToLow/{high}/{low}")]
+        public async Task<IEnumerable<ReadProductDTO>> GetProductByPriceBetween(double high, double low)
+        {
+            var results = await _productDAL.GetPriceBetween(high,low);
+            var product = _mapper.Map<IEnumerable<ReadProductDTO>>(results);
+            return product;
+        }
         [HttpGet("ByPriceToHigh/{price}")]
         public async Task<IEnumerable<ReadProductDTO>> GetProductByPriceToHigh(double price)
         {
@@ -119,7 +124,6 @@ namespace StoreWebAPI.Controllers
             var product = _mapper.Map<IEnumerable<ReadProductDTO>>(results); ;
             return product;
         }
-
         [HttpGet("Pagnation/{page}")]
         public async Task<IEnumerable<ReadProductCategoryDTO>> GetPage(int page)
         {
@@ -129,7 +133,6 @@ namespace StoreWebAPI.Controllers
             var finalResult = product.Skip((page - 1) * record).Take(record).ToList();
             return finalResult;
         }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -143,7 +146,7 @@ namespace StoreWebAPI.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        [HttpPut]//Update
+        [HttpPut]
         public async Task<ActionResult<List<ReadProductCategoryDTO>>> updateProduct(UpdateProductCategoryDTO productDTO)
         {
             var product = await _context.Products.FirstOrDefaultAsync(s => s.Id == productDTO.Id);
