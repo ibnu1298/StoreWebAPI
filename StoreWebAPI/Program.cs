@@ -20,6 +20,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Inject class DAL
 builder.Services.AddScoped<IProduct, ProductDAL>();
+builder.Services.AddScoped<IShoppingCart, ShoppingCartDAL>();
 
 var app = builder.Build();
 
