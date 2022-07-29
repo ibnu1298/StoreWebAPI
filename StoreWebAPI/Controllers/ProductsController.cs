@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StoreWebAPI.Data.DAL;
 using StoreWebAPI.Dtos.Product;
+using StoreWebAPI.Helpers;
 using StoreWebAPI.Models;
 
 namespace StoreWebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -57,7 +59,7 @@ namespace StoreWebAPI.Controllers
             {
                 var newProduct = _mapper.Map<Product>(createProduct);
                 var result = await _productDAL.Insert(newProduct);
-                var product = _mapper.Map<ReadProductDTO>(result);
+                var product = _mapper.Map<ReadProductCategoryDTO>(result);
 
                 return CreatedAtAction("Get", new { id = result.Id }, product);
             }
@@ -72,7 +74,7 @@ namespace StoreWebAPI.Controllers
             try
             {
                 var newProduct = _mapper.Map<Product>(createProduct);
-                var result = await _productDAL.Insert(newProduct);
+                var result = await _productDAL.AddProductWithCategory(newProduct);
                 var product = _mapper.Map<ReadProductCategoryDTO>(result);
                 return CreatedAtAction("Get", new { id = result.Id }, product);
             }
@@ -110,7 +112,7 @@ namespace StoreWebAPI.Controllers
             var product = _mapper.Map<IEnumerable<ReadProductDTO>>(results);
             return product;
         }
-        [HttpGet("ByPriceToLow/{high}/{low}")]
+        [HttpGet("ByPriceBetween/{high}/{low}")]
         public async Task<IEnumerable<ReadProductDTO>> GetProductByPriceBetween(double high, double low)
         {
             var results = await _productDAL.GetPriceBetween(high,low);
@@ -129,7 +131,7 @@ namespace StoreWebAPI.Controllers
         {
             var results = await _productDAL.GetProductWithCategory();
             var product = _mapper.Map<IEnumerable<ReadProductCategoryDTO>>(results);
-            var record = 20;
+            var record = 2;
             var finalResult = product.Skip((page - 1) * record).Take(record).ToList();
             return finalResult;
         }

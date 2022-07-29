@@ -11,10 +11,12 @@ namespace StoreWebAPI.Data.DAL
         {
             _context = context;
         }
-        public async Task<Product> AddProductWithCategory(Product product)
+        public async Task<Product> Insert(Product product)
         {
+            var category = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Category.Id == product.CategoryId);
             try
             {
+                if (category == null) throw new($"Category dengan Id = {product.CategoryId} Tidak Ditemukan");
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
                 return product;
@@ -103,10 +105,12 @@ namespace StoreWebAPI.Data.DAL
             return results;
         }
 
-        public async Task<Product> Insert(Product obj)
+        public async Task<Product> AddProductWithCategory(Product obj)
         {
+            var category = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Category.Name == obj.Category.Name);
             try
             {
+                if (category != null) throw new("Category Sudah Ada");
                 _context.Products.Add(obj);
                 await _context.SaveChangesAsync();
                 return obj;
