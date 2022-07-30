@@ -8,6 +8,5 @@
         public int Stock { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
-        public List<ShoppingCart> ShoppingCarts { get; set; } = new List<ShoppingCart>();
     }
 }

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace StoreWebAPI.Models
 {
-    public class Order
+    public class ShoppingCartItem
     {
-        public int OrderId { get; set; }
-        public string StatusPayment { get; set; }
+        public int Id { get; set; }
+        public int Quatity { get; set; }
+        public int ProductId { get; set; }
         public int ShoppingCartId { get; set; }
-        public DateTime OrderDate { get; set; }
+        public Product Product { get; set; }
         public ShoppingCart ShoppingCart { get; set; }
     }
 }

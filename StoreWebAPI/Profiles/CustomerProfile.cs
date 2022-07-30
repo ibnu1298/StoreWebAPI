@@ -15,6 +15,9 @@ namespace StoreWebAPI.Profiles
 
             CreateMap<Customer, ReadCustAddressDTO>();
             CreateMap<ReadCustAddressDTO, Customer>();
+
+            CreateMap<CustomerCartReadDTO, Customer>();
+            CreateMap<Customer, CustomerCartReadDTO>();
         }
     }
 }

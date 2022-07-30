@@ -24,6 +24,10 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //Inject class DAL
 builder.Services.AddScoped<IProduct, ProductDAL>();
 builder.Services.AddScoped<IAddress, AddressDAL>();
+builder.Services.AddScoped<IShoppingCart, ShoppingCartDAL>();
+builder.Services.AddScoped<IShoppingCartItem, ShoppingCartItemDAL>();
+builder.Services.AddScoped<IOrder, OrderDAL>();
+builder.Services.AddScoped<IInvoice, InvoiceDAL>();
 
 // configure strongly typed settings object
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));

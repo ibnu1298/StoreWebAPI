@@ -48,7 +48,7 @@ namespace StoreWebAPI.Data.DAL
 
         public async Task<IEnumerable<Address>> GetByName(string name)
         {
-            var results = await _context.Addresses.Where(a => a.Name.Contains(name)).OrderByDescending(a => a.Name).ToListAsync();
+            var results = await _context.Addresses.Where(a => a.Street.Contains(name)).OrderByDescending(a => a.Street).ToListAsync();
             return results;
         }
 
@@ -73,8 +73,6 @@ namespace StoreWebAPI.Data.DAL
             {
                 var updateAddress = await _context.Addresses.FirstOrDefaultAsync(a => a.Id == obj.Id);
                 if (updateAddress == null) throw new($"Data Tidak dengan Id {obj.Id} Tidak ditemukan");
-                updateAddress.Name = obj.Name;
-                updateAddress.NumberPhone = obj.NumberPhone;
                 updateAddress.Street = obj.Street;
                 updateAddress.PostalCode = obj.PostalCode;
                 updateAddress.District = obj.District;

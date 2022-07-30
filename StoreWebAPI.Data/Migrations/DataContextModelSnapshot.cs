@@ -41,13 +41,6 @@ namespace StoreWebAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("NumberPhone")
-                        .HasColumnType("float");
-
                     b.Property<int>("PostalCode")
                         .HasColumnType("int");
 
@@ -118,32 +111,45 @@ namespace StoreWebAPI.Data.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("StoreWebAPI.Models.Order", b =>
+            modelBuilder.Entity("StoreWebAPI.Models.Invoice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("InvoiceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"), 1L, 1);
 
-                    b.Property<DateTime>("Date")
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("InvoiceId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("StoreWebAPI.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"), 1L, 1);
+
+                    b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Methode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ShoppingCartId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("StatusPayment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrderId");
 
-                    b.HasIndex("ShoppingCartId")
-                        .IsUnique();
+                    b.HasIndex("ShoppingCartId");
 
                     b.ToTable("Orders");
                 });
@@ -178,28 +184,47 @@ namespace StoreWebAPI.Data.Migrations
 
             modelBuilder.Entity("StoreWebAPI.Models.ShoppingCart", b =>
                 {
+                    b.Property<int>("ShoppingCartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShoppingCartId"), 1L, 1);
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShoppingCartId");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("ShoppingCarts");
+                });
+
+            modelBuilder.Entity("StoreWebAPI.Models.ShoppingCartItem", b =>
+                {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("Quatity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShoppingCartId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingCarts");
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("StoreWebAPI.Models.Address", b =>
@@ -213,13 +238,26 @@ namespace StoreWebAPI.Data.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("StoreWebAPI.Models.Order", b =>
+            modelBuilder.Entity("StoreWebAPI.Models.Invoice", b =>
                 {
-                    b.HasOne("StoreWebAPI.Models.ShoppingCart", null)
-                        .WithOne("Order")
-                        .HasForeignKey("StoreWebAPI.Models.Order", "ShoppingCartId")
+                    b.HasOne("StoreWebAPI.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("StoreWebAPI.Models.Order", b =>
+                {
+                    b.HasOne("StoreWebAPI.Models.ShoppingCart", "ShoppingCart")
+                        .WithMany()
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("StoreWebAPI.Models.Product", b =>
@@ -235,17 +273,32 @@ namespace StoreWebAPI.Data.Migrations
 
             modelBuilder.Entity("StoreWebAPI.Models.ShoppingCart", b =>
                 {
-                    b.HasOne("StoreWebAPI.Models.Customer", null)
-                        .WithMany("ShoppingCarts")
-                        .HasForeignKey("CustomerId")
+                    b.HasOne("StoreWebAPI.Models.Customer", "Customer")
+                        .WithOne("ShoppingCart")
+                        .HasForeignKey("StoreWebAPI.Models.ShoppingCart", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StoreWebAPI.Models.Product", null)
-                        .WithMany("ShoppingCarts")
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("StoreWebAPI.Models.ShoppingCartItem", b =>
+                {
+                    b.HasOne("StoreWebAPI.Models.Product", "Product")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("StoreWebAPI.Models.ShoppingCart", "ShoppingCart")
+                        .WithMany("ShoppingCartItem")
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("StoreWebAPI.Models.Category", b =>
@@ -257,18 +310,13 @@ namespace StoreWebAPI.Data.Migrations
                 {
                     b.Navigation("Addresses");
 
-                    b.Navigation("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("StoreWebAPI.Models.Product", b =>
-                {
-                    b.Navigation("ShoppingCarts");
+                    b.Navigation("ShoppingCart")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StoreWebAPI.Models.ShoppingCart", b =>
                 {
-                    b.Navigation("Order")
-                        .IsRequired();
+                    b.Navigation("ShoppingCartItem");
                 });
 #pragma warning restore 612, 618
         }
